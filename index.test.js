@@ -51,4 +51,16 @@ describe('Restaurant and Menu Models', () => {
         byeSheep = await Restaurant.findByPk(2);
         expect(byeSheep).toEqual(null)
     });
-})
+
+    test('create association one to many', async () => {
+        // TODO - write test
+        let firstRes = restaurants[0];
+        let firstMenu = menus[0];
+        let secondMenu = menus[1];
+        firstRes.addMenu(firstMenu);
+        firstRes.addMenu(secondMenu)
+        let menusInFR = await firstRes.getMenus();
+        //console.log(menusInFR)
+        expect(menusInFR.length).toEqual(2)
+    });
+});
