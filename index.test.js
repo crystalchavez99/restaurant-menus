@@ -1,5 +1,5 @@
 const {sequelize} = require('./db')
-const {Restaurant, Menu} = require('./models/index')
+const {Restaurant, Menu, Item} = require('./models/index')
 const {
     seedRestaurant,
     seedMenu,
@@ -63,4 +63,35 @@ describe('Restaurant and Menu Models', () => {
         //console.log(menusInFR)
         expect(menusInFR.length).toEqual(2)
     });
+
+    test('can create a Item',async () =>{
+        let burger = await Item.create({name: "American Classic", image: "url", price: 11.99, vegetarian: false})
+        expect(burger.vegetarian).toEqual(false)
+    })
+    test('can find Item',async () =>{
+        let americanB = await Item.findByPk(1)
+        expect(americanB.id).toEqual(1)
+    })
+    test('create association many to many', async () => {
+        // TODO - write test
+        //let firstRes = restaurants[0];
+        let firstMenu = menus[0];
+        let americanB = await Item.findByPk(1);
+        //console.log(americanB)
+        americanB.addMenus(firstMenu);
+        firstMenu.addItems(americanB)
+        let items = firstMenu.getItems();
+        let menu = americanB.getMenus();
+        //console.log(items)
+       // console.log(menus)
+        //expect(menusInFR.length).toEqual(2)
+    });
+
+    test('eager loading', async () =>{
+        let allMenus = await Menu.findAll({
+            include: Item
+        })
+        //console.log(allMenus)
+        expect(allMenus[0].dataValues.Items.length).toBeGreaterThan(-1)
+    })
 });
